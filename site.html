@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>art-template demo</title>
+  <script src="./template-web.js"></script>
+  
+</head>
+
+<body >
+  <h3>条件判断</h3>
+  <button onclick="increaseCode()">点击增加code值</button>
+  <div id="content">
+  <script id="tpl" type="text/html">
+      {{if code <= MAX_CODE}} 
+        <span>code的值是{{code}}</span>
+      {{else}}
+        <span>code值大于{{MAX_CODE}}</span>
+      {{/if}}
+       
+      </script>
+  </div>
+  <hr/>
+  
+  <h3>循环</h3>
+  <div id="content2">
+    <script id="tpl2" type="text/html">
+      {{if cities.length > 0}}
+        {{each cities}}
+          {{if $index === 3}}
+            <p>{{$index}}: {{$value.city}}-{{($value.enName) | test}}</p>
+          {{/if}}
+        {{/each}}
+      {{else}}
+        <p>没有数据</p>
+      {{/if}}
+    </script>
+  </div>
+</body>
+<script>
+   // 添加自定义方法
+   template.defaults.imports.test = value => {
+    let tempArr = value.split("");
+    let arr = [];
+    tempArr.forEach(i => arr.push(i.toLowerCase()))
+    return arr.join("")
+   }
+
+  // 绑定模板和数据
+  function dataBindToTpl(tpl,bindData, idSelector) {
+    var html = template(tpl, bindData)
+    document.getElementById(idSelector).innerHTML = html;
+  }
+  const MAX_CODE = 3;
+  var data = {
+    MAX_CODE: 3,
+    title: '<p>art-template demo</p>',
+    code: 1
+  };
+  function increaseCode() {
+    data.code++
+    // 当模板绑定的数据发生变化时，需要重新对页面进行绑定，否则数据变化视图不会发生变化！
+    dataBindToTpl('tpl', data, 'content')
+    console.log(data.code)
+  }
+  dataBindToTpl('tpl', data, 'content')
+
+  // 循环
+  // 语法 {{each 循环的数据 }} {{/each}}  $index:索引 $value: 值
+  let data2 = {
+    cities: [ {city: '北京', enName: 'BEIJING'},
+      {city: '上海', enName: 'SHANGHAI' },
+      {city: '南京', enName: 'NANJING' },
+      {city: '天津', enName: 'TIANJING' }]
+  }
+  dataBindToTpl('tpl2', data2, 'content2')
+ 
+</script>
+</html>
